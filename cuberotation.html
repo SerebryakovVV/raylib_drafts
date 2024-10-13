@@ -1,0 +1,226 @@
+<style>
+    
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    canvas {
+        border: 1px solid black;
+    }
+
+</style>
+
+<div>
+    <canvas id="canvas" width="500" height="500"></canvas>
+
+    <div>
+        <button onclick="rotate(0.1)">ACl</button>
+        <button onclick="rotate(-0.1)">Cl</button>
+        <button onclick="rotateSelf(0.1)">Self</button>
+        <button onclick="scale()">Scale</button>
+    </div>
+
+</div>
+
+<script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");    
+    ctx.fillStyle = "black";
+    // ctx.fillRect(0,0,canvas.width,canvas.height);
+
+
+
+
+
+    const vertices = [
+        {x:100,y:100},
+        {x:200,y:100},
+        {x:200,y:200},
+        {x:100,y:200}
+    ];
+
+    const edges = [
+        [0,1],
+        [1,2],
+        [2,3],
+        [3,0]
+    ]
+
+
+
+    function draw() {
+        ctx.fillStyle = "white";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle = "black";
+        for (let i = 0; i < edges.length; i++) {
+            ctx.beginPath();
+            ctx.moveTo(vertices[edges[i][0]].x, vertices[edges[i][0]].y);
+            ctx.lineTo(vertices[edges[i][1]].x, vertices[edges[i][1]].y);
+            ctx.stroke();
+        }
+    }
+
+
+
+   
+
+
+
+
+    // document.addEventListener("mousedown", ()=>{
+    //     for (let i = 0; i < vertices.length; i++) {
+    //         vertices[i].x += 10;
+    //         vertices[i].y += 10;
+    //     }
+    //     draw();
+    // })
+
+
+
+
+    document.addEventListener("keydown", (e)=>{
+        let key = e.key;
+        switch (key) {
+            case "ArrowUp":
+                moveXY("ArrowUp");
+                break;
+            case "ArrowRight":
+                moveXY("ArrowRight");
+                break;
+            case "ArrowDown":
+                moveXY("ArrowDown");
+                break;
+            case "ArrowLeft":
+                moveXY("ArrowLeft");
+                break;
+            default:
+                console.log("Wrong Key!");    
+        }
+        draw();
+    })
+
+
+    function moveXY(direction) {
+        if (direction === "ArrowUp") {
+            for (let i = 0; i < vertices.length; i++) {
+                vertices[i].y -= 10;
+            }
+        } else if (direction === "ArrowRight") {
+            for (let i = 0; i < vertices.length; i++) {
+                vertices[i].x += 10;
+            }
+        } else if(direction === "ArrowDown") {
+            for (let i = 0; i < vertices.length; i++) {
+                vertices[i].y += 10;
+            }
+        } else {
+            for (let i = 0; i < vertices.length; i++) {
+                vertices[i].x -= 10;
+            }
+        }
+    }
+ 
+
+
+
+
+
+    function rotate(value) {
+        for (let i = 0; i < vertices.length; i++) {
+
+                let newX = vertices[i].x*Math.cos(value)-vertices[i].y*Math.sin(value);
+                let newY = vertices[i].x*Math.sin(value)+vertices[i].y*Math.cos(value);
+
+                vertices[i].x = newX;
+                vertices[i].y = newY;
+            }
+
+            draw();
+    }
+
+
+
+
+
+
+    function rotateSelf(value) {
+        for (let i = 0; i < vertices.length; i++) {
+
+            //150 150
+
+            let middleX = vertices[i].x - 150;
+            let middleY = vertices[i].y - 150;
+
+
+            let rotatedMiddleX = middleX *Math.cos(value) - middleY *Math.sin(value);
+            let rotatedMiddleY = middleX *Math.sin(value) + middleY *Math.cos(value);
+
+            vertices[i].x = rotatedMiddleX + 150;
+            vertices[i].y = rotatedMiddleY + 150;
+
+            }
+            draw();
+    }
+
+
+
+    function scale() {
+        for (let i = 0; i < vertices.length; i++) {
+
+            //150 150
+
+            // i think 150 150 is the middle of the cube, i don't remember
+            // something like: if you want to scale object, then move it to origin and calculate - or + zoom value, depending on pos or neg value of vertix coordinates
+
+            let middleX = vertices[i].x - 150;
+            let middleY = vertices[i].y - 150;
+
+            if (middleX < 0) {
+                middleX -= 10;
+            } else if (middleX > 0) {
+                middleX += 10;
+            }
+
+            if (middleY < 0) {
+                middleY -= 10;
+            } else if (middleY > 0) {
+                middleY += 10;
+            }
+
+
+    
+
+            vertices[i].x = middleX + 150;
+            vertices[i].y = middleY + 150;
+
+        }
+         draw();
+    }
+
+
+
+
+
+    // rotate()
+
+
+    draw();
+
+
+
+</script>
+
+    
+
+<!-- https://www.instructables.com/Rotating-Cube-Using-JavaScript/
+https://tobiasmarciszko.github.io/rotating-js-cube/
+https://www.malinc.se/math/linalg/rotatecubeen.php
+https://en.wikipedia.org/wiki/Rotation_matrix -->
